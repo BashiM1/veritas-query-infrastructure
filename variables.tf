@@ -47,6 +47,6 @@ variable "state_bucket" {
 variable "codestar_connection_arn" {
   description = "ARN of the CodeStar Connections connection"
   type        = string
-  default     = "arn:aws:codestar-connections:us-east-1:123456789012:connection/abcd1234-ef56-7890-ab12-cd34ef56gh78"
+  default     = "arn:aws:codeconnections:us-east-1:493162620475:connection/295d3728-1913-46b6-8346-689a3064bff4"
 }
 
