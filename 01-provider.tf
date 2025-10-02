@@ -1,6 +1,5 @@
 provider "aws" {
   region = "us-east-1"
-  profile = "bash"
 }
 
 terraform {
@@ -13,10 +12,8 @@ terraform {
 
   backend "s3" {
     bucket  = "veritas-query-terraform" 
-    key     = "veritas-query/terraform.tfstate"    
+    key     = "veritas-query-infrastructure/dev/terraform.tfstate"    
     region  = "us-east-1"         
     encrypt = true                
   }
 }
-
-
