@@ -23,7 +23,7 @@ variable "environment" {
 variable "github_owner" {
   description = "GitHub repository owner"
   type        = string
-  default     = "rossislike"
+  default     = "BashiM1"
 }
 
 variable "github_repo" {
