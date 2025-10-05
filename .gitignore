@@ -32,3 +32,17 @@ terraform.rc
 
 # macOS specific files
 .DS_Store
+
+# Ignore terraform locks
+.terraform.lock.hcl
+
+# Ignore terragrunt cache
+.terragrunt-cache
+
+testing/
+
+lambdas/*.zip
+.env
+*.zip
+layer/python/*
+!layer/python/requirements.txt
