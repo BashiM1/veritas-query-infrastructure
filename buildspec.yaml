@@ -11,6 +11,10 @@ phases:
     commands:
       # Use an environment variable for the backend S3 bucket name
       - terraform init -backend-config="bucket=$TF_STATE_BUCKET"
+      - '[[ -n "${TF_STATE_BUCKET}" ]] && echo "**** It works!! $TF_STATE_BUCKET ****"'
+      - cd layer/python
+      - pip install -r requirements.txt -t .
+      - cd ../..
   build:
     commands:
       # Run the destroy command
