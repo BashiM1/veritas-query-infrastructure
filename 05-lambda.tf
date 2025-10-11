@@ -132,3 +132,48 @@ resource "aws_lambda_permission" "allow_test_lambda" {
     principal     = "apigateway.amazonaws.com"
     source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
 }
+####################################################
+data "archive_file" "post_prompt_zip" {
+    type = "zip"
+    source_file = "${path.module}/lambdas/post_prompt.py"
+    output_path = "${path.module}/lambdas/post_prompt.zip"
+}
+
+resource "aws_s3_object" "post_prompt_code" {
+    bucket = aws_s3_bucket.lambda_bucket.id
+    key = "post_prompt.zip"
+    source = data.archive_file.post_prompt_zip.output_path
+    etag = data.archive_file.post_prompt_zip.output_md5
+}
+
+resource "aws_lambda_function" "post_prompt" {
+  function_name    = "${var.project_name}-post-prompt-${var.environment}"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "post_prompt.lambda_handler"
+  runtime          = "python3.13"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.post_prompt_code.key
+  source_code_hash = data.archive_file.post_prompt_zip.output_base64sha256
+
+  layers           = [aws_lambda_layer_version.python_layer.arn]
+
+  logging_config {
+    log_group  = aws_cloudwatch_log_group.lambda_logs.name
+    log_format = "Text"
+  }
+  environment {
+    variables = {
+      BUCKET_NAME = aws_s3_bucket.website.bucket
+      #   PHOTOS_TABLE_NAME = aws_dynamodb_table.photogallery.name
+    }
+  }
+}
+
+resource "aws_lambda_permission" "allow_post_prompt" {
+    statement_id  = "AllowAPIGatewayInvokeTestLambda"
+    action        = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.post_prompt.function_name
+    principal     = "apigateway.amazonaws.com"
+    source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
+}
